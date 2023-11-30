@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+    tools{
+        jdk 'jdk11'
+        maven 'maven3'
+    }
+    stages {
+        stage(' Git checkout') {
+            steps {
+                echo 'checkout code'
+                git branch: 'prod', url: 'https://github.com/kumrajbiz/WatherMapMicroserviceReacttV2.git'
+                echo 'checkout code done '
+                dir("Folder structure") {
+                    sh "pwd"
+                }
+            }
+        }
+        stage('Project build') {
+            steps {
+                echo 'Building maven project'
+                
+                dir("${env.WORKSPACE}/Service-Registory"){
+                        echo "building Registry"
+                        sh "pwd"
+                        sh "mvn clean install"
+                    }
+                echo "${env.WORKSPACE}"
+                dir("${env.WORKSPACE}/WeatherMapAPIv3-Mocroservice2"){
+                        echo "building API"
+                        sh "pwd"
+                        sh "mvn clean install"
+                    }
+                echo "${env.WORKSPACE}"
+                                dir("${env.WORKSPACE}/WeatherClientV3-Microsevices"){
+                        echo "building Client"
+                        sh "pwd"
+                        sh "mvn clean install"
+                    }
+                echo "${env.WORKSPACE}"
+                
+                echo 'Building maven project done '
+            }
+        }
+    }
+}
